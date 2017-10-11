@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+  cmd:
+    build: .
+    command: python3 request.py
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+    network_mode: 'host'
