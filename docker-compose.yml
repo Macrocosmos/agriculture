@@ -6,8 +6,6 @@ services:
   cmd:
     build: .
     command: python3 request.py
-    volumes:
-      - .:/code
     depends_on:
       - db
     network_mode: 'host'
