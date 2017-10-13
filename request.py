@@ -23,8 +23,8 @@ def get_ndvi(red_band, nir_band):
             red = red_raster_file.read(1)
             nir = nir_raster_file.read(1)
             ndvi = (nir.astype(float) - red.astype(float)) / (nir + red)
-            ndvi[ndvi<0.5] = 0
-            ndvi[ndvi>0.8] = 0
+            # ndvi[ndvi<0.5] = 0
+            # ndvi[ndvi>0.8] = 0
 
             return ndvi
 
@@ -41,18 +41,19 @@ for date in dates:
 
     ndvis.append(get_ndvi(red_band, nir_band))
 
-ndvi_avg = (ndvis[0] + ndvis[2])  / 2.0
+# ndvi_avg = (ndvis[0] + ndvis[2])  / 2.0
 
-ndvi = ndvis[1] - ndvi_avg
+ndvi = ndvis[1] - ndvis[2]
+ndvi[ndvi<0.3] = 0
+# ndvi[ndvi>0.8] = 0
 
-profile = band_image('04', '2017-3-16').meta
-profile.update(driver='GTiff')
-profile.update(dtype=rasterio.float32)
+with rasterio.open(band_image('04', '2017-3-16')) as red_file:
+    profile = red_file.meta
+    profile.update(driver='GTiff')
+    profile.update(dtype=rasterio.float32)
 
 with rasterio.open('thing.tif', 'w', **profile) as dst:
     print(dst.shape)
     print(ndvi.shape)
     print(dst.indexes)
     dst.write(ndvi.astype(rasterio.float32), 1)
-
-

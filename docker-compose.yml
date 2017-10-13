@@ -8,4 +8,6 @@ services:
     command: python3 request.py
     depends_on:
       - db
+    volumes:
+      - .:/code
     network_mode: 'host'
